@@ -1,0 +1,4 @@
+# Global ignores
+**/__pycache__/
+**/.env
+**/venv/
