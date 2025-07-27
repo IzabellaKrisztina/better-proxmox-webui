@@ -2,3 +2,28 @@
 **/__pycache__/
 **/.env
 **/venv/
+
+
+# Ignore frontend build artifacts and environment configs
+
+# dependencies
+proxmox-ui/node_modules/
+proxmox-ui/.pnp/
+proxmox-ui/.pnp.js
+
+# testing
+proxmox-ui/coverage/
+
+# production
+proxmox-ui/build/
+
+# misc
+proxmox-ui/.DS_Store
+proxmox-ui/.env.local
+proxmox-ui/.env.development.local
+proxmox-ui/.env.test.local
+proxmox-ui/.env.production.local
+
+proxmox-ui/npm-debug.log*
+proxmox-ui/yarn-debug.log*
+proxmox-ui/yarn-error.log*
