@@ -9,15 +9,24 @@ import {
   TableRow,
   Paper,
   TableSortLabel,
+  Checkbox,
 } from "@mui/material";
 
 type Order = "asc" | "desc";
 
 interface Props {
   data: VM[];
+  selectedVMIds: number[];
+  onToggleSelect: (vmid: number) => void;
+  onToggleSelectAll: (checked: boolean) => void;
 }
 
-export default function VMTable({ data }: Props) {
+export default function VMTable({
+  data,
+  selectedVMIds,
+  onToggleSelect,
+  onToggleSelectAll,
+}: Props) {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof VM>("name");
 
@@ -46,11 +55,22 @@ export default function VMTable({ data }: Props) {
     return 0;
   });
 
+  const allSelected =
+    data.length > 0 && data.every((vm) => selectedVMIds.includes(vm.vmid));
+  const isIndeterminate = selectedVMIds.length > 0 && !allSelected;
+
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
+            <TableCell padding="checkbox">
+              <Checkbox
+                checked={allSelected}
+                indeterminate={isIndeterminate}
+                onChange={(e) => onToggleSelectAll(e.target.checked)}
+              />
+            </TableCell>
             {columns.map((key) => (
               <TableCell key={key}>
                 <TableSortLabel
@@ -67,6 +87,12 @@ export default function VMTable({ data }: Props) {
         <TableBody>
           {sortedData.map((vm) => (
             <TableRow key={vm.vmid}>
+              <TableCell padding="checkbox">
+                <Checkbox
+                  checked={selectedVMIds.includes(vm.vmid)}
+                  onChange={() => onToggleSelect(vm.vmid)}
+                />
+              </TableCell>
               <TableCell>{vm.vmid}</TableCell>
               <TableCell>{vm.name}</TableCell>
               <TableCell>{vm.status}</TableCell>
