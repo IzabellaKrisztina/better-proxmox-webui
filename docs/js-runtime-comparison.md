@@ -12,13 +12,20 @@ Two versions of the project were tested:
 
 
 ## 🧪 Test Environment
+### Windows
+- **OS**: Windows 10 (via Git Bash terminal in VS Code)  
 - **Machine**: 
     - Lenovo ThinkPad T15 Gen 1
     - 32 GB RAM
     - Intel(R) Core(TM) i7-10510U CPU @ 1.80GHz
 - **React Version**: 19.1.0
-- **Node Version**: v22.17.1
-- **Bun Version**: 1.2.19
+- **Node Version**: v24.5.0
+- **Bun Version**: 1.2.20
+
+### Linux
+- **OS**: Linux Mint  
+- **Machine**: Same as above (Lenovo ThinkPad T15 Gen 1)  
+- **React, Node, Bun versions**: Same versions as Windows  
 
 
 ## ✅ Test Cases & Steps
@@ -87,7 +94,8 @@ Two versions of the project were tested:
 
 
 ## 📊 Results
-### Hot Reload (HMR)
+### Windows Results
+#### Hot Reload (HMR)
 | Test Change | Node (ms) | Bun (ms) | % Faster (Bun) |
 | ----------- | --------- | -------- | -------------- |
 | Text Change | 3000      | 1000     | **66.7%**      |
@@ -96,7 +104,7 @@ Two versions of the project were tested:
 | **Average** | **2333**  | **1667** | **28.6%**      |
 
 
-### Full Production Build
+#### Full Production Build
 | Run         | Node (s)   | Bun (s)  | % Faster (Bun) |
 | ----------- | ---------- | -------- | -------------- |
 | #1          | 34.757     | 33.978   | 2.24%          |
@@ -105,14 +113,41 @@ Two versions of the project were tested:
 | **Average** | **28.788** | **26.955** | **6.36%**    |
 
 
+### Linux Results
+#### Hot Reload (HMR)
+| Test Change | Node (ms)  | Bun (ms)  | % Faster (Bun) |
+| ----------- | ---------- | --------- | -------------- |
+| Text Change | 2730       | 580       | **78.8%**      |
+| Add Button  | 530        | 480       | **9.4%**       |
+| CSS Change  | 560        | 280       | **50.0%**      |
+| **Average** | **1273.3** | **446.7** | **64.9%**      |
+
+
+#### Full Production Build
+| Run         | Node (s) | Bun (s)  | % Faster (Bun) |
+| ----------- | -------- | -------- | -------------- |
+| #1          | 12.463   | 12.905   | **-3.5%**      |
+| #2          | 9.167    | 10.194   | **-11.2%**     |
+| #3          | 10.005   | 9.551    | **4.5%**       |
+| **Average** | **10.5** | **10.9** | **-3.2%**      |
+
+
 ## 📈 Graphs
-### HMR Speed Comparison
+### Windows Results
+#### HMR Speed Comparison
 
-![HMR Speed Comparison](assets/hot_reload_three_graphs.png)
+<!-- ![HMR Speed Comparison](assets/hot_reload_three_graphs.png) -->
 
-### Full Build Time Comparison
+#### Full Build Time Comparison
 
-![Build Time Comparison](assets/build_time_comparison_combined.png)
+<!-- ![Build Time Comparison](assets/build_time_comparison_combined.png) -->
 
+### Linux Results
+#### HMR Speed Comparison
 
-## ✅ Observations
+![HMR Speed Comparison](assets/linux_hmr_results.png)
+
+#### Full Build Time Comparison
+
+![Build Time Comparison](assets/linux_build_time_results.png)
+
