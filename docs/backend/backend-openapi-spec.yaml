@@ -1,0 +1,351 @@
+openapi: 3.1.0
+info:
+  title: Alternative Proxmox Bulk UI API
+  version: 1.0.0
+  description: >
+    Backend API for managing Proxmox VMs in bulk. Supports create, delete, update,
+    and job tracking.
+
+servers:
+  - url: /api/v1
+
+paths:
+  /vms:
+    get:
+      summary: List VMs
+      parameters:
+        - in: query
+          name: node-id
+          schema:
+            type: string
+          description: Filter VMs by node
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Filter by VM status (running, stopped)
+      responses:
+        '200':
+          description: List of VMs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vms:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VM'
+    post:
+      summary: Create VM(s)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vms:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/VMCreateRequest'
+      responses:
+        '201':
+          description: Job queued for VM creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRef'
+    delete:
+      summary: Delete VM(s)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vmIds:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '202':
+          description: Job queued for VM deletion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRef'
+
+  /vms/{vm-id}:
+    get:
+      summary: Get VM details
+      parameters:
+        - name: vm-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: VM details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VM'
+    patch:
+      summary: Update a VM
+      parameters:
+        - name: vm-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VMUpdateRequest'
+      responses:
+        '202':
+          description: Job queued for VM update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRef'
+    delete:
+      summary: Delete a single VM
+      parameters:
+        - name: vm-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: Job queued for VM deletion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRef'
+
+  /jobs:
+    get:
+      summary: List jobs
+      responses:
+        '200':
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Job'
+    post:
+      summary: Create a generic job (e.g., shutdown, restart)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: shutdown
+                targets:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '202':
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRef'
+
+  /jobs/{job-id}:
+    get:
+      summary: Get job details and progress
+      parameters:
+        - name: job-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+    delete:
+      summary: Cancel a job
+      parameters:
+        - name: job-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Job canceled
+
+  /nodes:
+    get:
+      summary: List cluster nodes
+      responses:
+        '200':
+          description: List of nodes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nodes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Node'
+
+  /nodes/{node-id}/vms:
+    get:
+      summary: List VMs on a specific node
+      parameters:
+        - name: node-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Node VMs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vms:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VM'
+
+components:
+  schemas:
+    VM:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nodeId:
+          type: string
+        status:
+          type: string
+          enum: [running, stopped, paused]
+        cpu:
+          type: integer
+        memoryMB:
+          type: integer
+        diskGB:
+          type: integer
+
+    VMCreateRequest:
+      type: object
+      required: [name, nodeId, templateId]
+      properties:
+        name:
+          type: string
+        nodeId:
+          type: string
+        templateId:
+          type: string
+        cpu:
+          type: integer
+        memoryMB:
+          type: integer
+        diskGB:
+          type: integer
+        network:
+          type: array
+          items:
+            type: object
+            properties:
+              bridge:
+                type: string
+              type:
+                type: string
+
+    VMUpdateRequest:
+      type: object
+      properties:
+        cpu:
+          type: integer
+        memoryMB:
+          type: integer
+        diskGB:
+          type: integer
+
+    Job:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+          enum: [queued, running, completed, failed, canceled]
+        createdBy:
+          type: string
+        progress:
+          type: object
+          properties:
+            total:
+              type: integer
+            completed:
+              type: integer
+            failed:
+              type: integer
+        tasks:
+          type: array
+          items:
+            type: object
+            properties:
+              vmId:
+                type: string
+              status:
+                type: string
+              logs:
+                type: string
+
+    JobRef:
+      type: object
+      properties:
+        jobId:
+          type: string
+        status:
+          type: string
+
+    Node:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [online, offline]
+        totalCPU:
+          type: integer
+        totalMemoryMB:
+          type: integer
+        usedMemoryMB:
+          type: integer
