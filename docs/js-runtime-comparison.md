@@ -136,18 +136,18 @@ Two versions of the project were tested:
 ### Windows Results
 #### HMR Speed Comparison
 
-<!-- ![HMR Speed Comparison](assets/hot_reload_three_graphs.png) -->
+![HMR Speed Comparison](assets/windows_results_comparison.png)
 
 #### Full Build Time Comparison
 
-<!-- ![Build Time Comparison](assets/build_time_comparison_combined.png) -->
+![Build Time Comparison](assets/windows_full_production_build.png)
 
 ### Linux Results
 #### HMR Speed Comparison
 
-![HMR Speed Comparison](assets/linux_hmr_results.png)
+<!-- ![HMR Speed Comparison](assets/linux_hmr_results.png) -->
 
 #### Full Build Time Comparison
 
-![Build Time Comparison](assets/linux_build_time_results.png)
+<!-- ![Build Time Comparison](assets/linux_build_time_results.png) -->
 
