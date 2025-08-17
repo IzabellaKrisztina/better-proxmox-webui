@@ -105,31 +105,31 @@ Two versions of the project were tested:
 
 
 #### Full Production Build
-| Run         | Node (s)   | Bun (s)  | % Faster (Bun) |
-| ----------- | ---------- | -------- | -------------- |
-| #1          | 34.757     | 33.978   | 2.24%          |
-| #2          | 26.996     | 23.422   | 13.25%         |
-| #3          | 24.612     | 23.465   | 4.66%          |
-| **Average** | **28.788** | **26.955** | **6.36%**    |
+| Run         | Node (s)   | Bun (s)    | % Faster (Bun) |
+| ----------- | ---------- | ---------- | -------------- |
+| #1          | 34.757     | 33.978     | 2.24%          |
+| #2          | 26.996     | 23.422     | 13.25%         |
+| #3          | 24.612     | 23.465     | 4.66%          |
+| **Average** | **28.788** | **26.955** | **6.36%**      |
 
 
 ### Linux Results
 #### Hot Reload (HMR)
-| Test Change | Node (ms)  | Bun (ms)  | % Faster (Bun) |
-| ----------- | ---------- | --------- | -------------- |
-| Text Change | 2730       | 580       | **78.8%**      |
-| Add Button  | 530        | 480       | **9.4%**       |
-| CSS Change  | 560        | 280       | **50.0%**      |
-| **Average** | **1273.3** | **446.7** | **64.9%**      |
+| Test Change | Node (ms) | Bun (ms)  | % Faster (Bun) |
+| ----------- | --------- | --------- | -------------- |
+| Text Change | 410       | 580       | **-41.5%**     |
+| Add Button  | 460       | 480       | **-4.3%**      |
+| CSS Change  | 420       | 280       | **33.3%**      |
+| **Average** | **430.0** | **446.7** | **-3.9%**      |
 
 
 #### Full Production Build
 | Run         | Node (s) | Bun (s)  | % Faster (Bun) |
 | ----------- | -------- | -------- | -------------- |
-| #1          | 12.463   | 12.905   | **-3.5%**      |
-| #2          | 9.167    | 10.194   | **-11.2%**     |
-| #3          | 10.005   | 9.551    | **4.5%**       |
-| **Average** | **10.5** | **10.9** | **-3.2%**      |
+| #1          | 20.618   | 12.905   | **37.4%**      |
+| #2          | 16.016   | 10.194   | **36.4%**      |
+| #3          | 15.632   | 9.551    | **38.9%**      |
+| **Average** | **17.4** | **10.9** | **37.2%**      |
 
 
 ## 📈 Graphs
@@ -145,9 +145,11 @@ Two versions of the project were tested:
 ### Linux Results
 #### HMR Speed Comparison
 
-<!-- ![HMR Speed Comparison](assets/linux_hmr_results.png) -->
+![HMR Speed Comparison](assets/linux_hmr_results.png)
 
 #### Full Build Time Comparison
 
-<!-- ![Build Time Comparison](assets/linux_build_time_results.png) -->
+![Build Time Comparison](assets/linux_prod_build_results.png)
 
+
+### Windows vs Linux 
