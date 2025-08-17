@@ -1,0 +1,441 @@
+openapi: 3.1.0
+info:
+  title: Cluster Management API
+  version: 1.0.0
+  description: >
+    REST API for managing VMs, templates, jobs, and cluster resources.
+servers:
+  - url: /api/v1
+
+components:
+  schemas:
+    VM:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        nodeId: { type: string }
+        status: { type: string, enum: [running, stopped, error] }
+        tags:
+          type: array
+          items: { type: string }
+        resources:
+          type: object
+          properties:
+            cpu: { type: integer }
+            ramMb: { type: integer }
+            diskGb: { type: integer }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    Template:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        os: { type: string }
+        nodeId: { type: string }
+        sizeMb: { type: integer }
+        createdAt: { type: string, format: date-time }
+
+    Job:
+      type: object
+      properties:
+        id: { type: string }
+        type: { type: string }
+        state: { type: string, enum: [pending, running, partial, succeeded, failed] }
+        progress: { type: integer, minimum: 0, maximum: 100 }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    Task:
+      type: object
+      properties:
+        id: { type: string }
+        resourceId: { type: string }
+        state: { type: string, enum: [pending, running, succeeded, failed] }
+        error: { type: string, nullable: true }
+        log:
+          type: array
+          items: { type: string }
+        startedAt: { type: string, format: date-time, nullable: true }
+        finishedAt: { type: string, format: date-time, nullable: true }
+
+    Node:
+      type: object
+      properties:
+        id: { type: string }
+        hostname: { type: string }
+        status: { type: string, enum: [online, offline, degraded] }
+        resources:
+          type: object
+          properties:
+            cpuTotal: { type: integer }
+            cpuUsed: { type: integer }
+            ramMbTotal: { type: integer }
+            ramMbUsed: { type: integer }
+            diskGbTotal: { type: integer }
+            diskGbUsed: { type: integer }
+
+    Cluster:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        version: { type: string }
+        status: { type: string }
+        nodes: { type: integer }
+        createdAt: { type: string, format: date-time }
+
+paths:
+  /vms:
+    get:
+      summary: List VMs
+      parameters:
+        - name: node
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: tag
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50, maximum: 200 }
+        - name: pageToken
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of VMs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/VM' }
+                  nextPageToken: { type: string, nullable: true }
+    post:
+      summary: Create VMs (bulk)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  name: { type: string }
+                  nodeId: { type: string }
+                  resources:
+                    type: object
+                    properties:
+                      cpu: { type: integer }
+                      ramMb: { type: integer }
+                      diskGb: { type: integer }
+                  tags:
+                    type: array
+                    items: { type: string }
+      responses:
+        '200':
+          description: Job started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId: { type: string }
+
+  /vms/{vm-id}:
+    get:
+      summary: Get VM details
+      parameters:
+        - name: vm-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: VM details
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VM' }
+    patch:
+      summary: Update VM config
+      parameters:
+        - name: vm-id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resources:
+                  type: object
+                  properties:
+                    cpu: { type: integer }
+                    ramMb: { type: integer }
+                    diskGb: { type: integer }
+                tags:
+                  type: array
+                  items: { type: string }
+      responses:
+        '200':
+          description: Job started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId: { type: string }
+    delete:
+      summary: Delete VM
+      parameters:
+        - name: vm-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Job started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId: { type: string }
+
+  /templates:
+    get:
+      summary: List templates
+      responses:
+        '200':
+          description: Template list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Template' }
+                  nextPageToken: { type: string, nullable: true }
+    post:
+      summary: Create a template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                os: { type: string }
+                nodeId: { type: string }
+                sourceUrl: { type: string }
+      responses:
+        '200':
+          description: Job started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId: { type: string }
+
+  /templates/{template-id}:
+    get:
+      summary: Get template details
+      parameters:
+        - name: template-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Template details
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Template' }
+    patch:
+      summary: Update template
+      parameters:
+        - name: template-id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+      responses:
+        '200':
+          description: Job started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId: { type: string }
+    delete:
+      summary: Delete template
+      parameters:
+        - name: template-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Job started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId: { type: string }
+
+  /jobs:
+    get:
+      summary: List jobs
+      responses:
+        '200':
+          description: Job list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Job' }
+                  nextPageToken: { type: string, nullable: true }
+
+  /jobs/{job-id}:
+    get:
+      summary: Job details
+      parameters:
+        - name: job-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
+
+  /jobs/{job-id}/tasks:
+    get:
+      summary: List tasks of a job
+      parameters:
+        - name: job-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Task list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Task' }
+                  nextPageToken: { type: string, nullable: true }
+
+  /jobs/{job-id}/tasks/{task-id}:
+    get:
+      summary: Get task details
+      parameters:
+        - name: job-id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: task-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Task' }
+
+  /nodes:
+    get:
+      summary: List nodes
+      responses:
+        '200':
+          description: Node list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Node' }
+                  nextPageToken: { type: string, nullable: true }
+
+  /nodes/{node-id}/resources:
+    get:
+      summary: Node resources
+      parameters:
+        - name: node-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Node resource usage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Node/properties/resources'
+
+  /resources:
+    get:
+      summary: Cluster-wide resources
+      responses:
+        '200':
+          description: Cluster-wide usage
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cpuTotal: { type: integer }
+                  cpuUsed: { type: integer }
+                  ramMbTotal: { type: integer }
+                  ramMbUsed: { type: integer }
+                  diskGbTotal: { type: integer }
+                  diskGbUsed: { type: integer }
+
+  /cluster:
+    get:
+      summary: Cluster details
+      responses:
+        '200':
+          description: Cluster details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cluster'
