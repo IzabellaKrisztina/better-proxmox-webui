@@ -19,7 +19,7 @@ Two versions of the project were tested:
     - 32 GB RAM
     - Intel(R) Core(TM) i7-10510U CPU @ 1.80GHz
 - **React Version**: 19.1.0
-- **Node Version**: v24.5.0
+- **Node Version**: v22.18.0
 - **Bun Version**: 1.2.20
 
 ### Linux
