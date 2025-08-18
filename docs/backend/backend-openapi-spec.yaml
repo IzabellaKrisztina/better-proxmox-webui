@@ -162,7 +162,7 @@ paths:
                 properties:
                   items:
                     type: array
-                    items: { $ref: '#/components/schemas/VM' }
+                    items: { $ref: '#/components/schemas/VM_Summary' }
                   nextPageToken: { type: string, nullable: true }
     post:
       summary: Create VMs (bulk)
@@ -209,7 +209,7 @@ paths:
           description: VM details
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/VM' }
+              schema: { $ref: '#/components/schemas/VM_Detail' }
     patch:
       summary: Update VM config
       parameters:
