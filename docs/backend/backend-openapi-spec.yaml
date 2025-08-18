@@ -9,13 +9,14 @@ servers:
 
 components:
   schemas:
-    VM:
+    VM_Summary:
       type: object
       properties:
         id: { type: string }
         name: { type: string }
         nodeId: { type: string }
         status: { type: string, enum: [running, stopped, error] }
+        uptime: { type: integer, nullable: true }
         tags:
           type: array
           items: { type: string }
@@ -27,6 +28,49 @@ components:
             diskGb: { type: integer }
         createdAt: { type: string, format: date-time }
         updatedAt: { type: string, format: date-time }
+
+    VM_Detail:
+      type: object
+      properties:
+        summary:
+          type: object
+          properties:
+            id: { type: string }
+            name: { type: string }
+            nodeId: { type: string }
+            status: { type: string, enum: [running, stopped, error] }
+            uptime: { type: integer, nullable: true }
+            tags:
+              type: array
+              items: { type: string }
+        hardware:
+          type: object
+          properties:
+            cpu: { type: integer }
+            ramMb: { type: integer }
+            diskGb: { type: integer }
+        options:
+          type: object
+          properties:
+            bootOrder: 
+              type: array
+              items: { type: string }
+            memoryBallooning: { type: boolean }
+            hotplug: 
+              type: object
+              properties:
+                cpu: { type: boolean }
+                memory: { type: boolean }
+                disk: { type: boolean }
+        cloudInit:
+          type: object
+          properties:
+            userData: { type: string }
+            networkConfig: { type: object }
+            sshKeys: 
+              type: array
+              items: { type: string }
+
 
     Template:
       type: object
