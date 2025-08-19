@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { VM } from "@/types/vm";
+import { VM } from "shared";
 import {
   Table,
   TableBody,

@@ -1,4 +1,4 @@
-import { VM } from "@/types/vm";
+import { VM } from "shared";
 
 export async function loadMockVMs(): Promise<VM[]> {
   const response = await fetch("/mock_vms.json");

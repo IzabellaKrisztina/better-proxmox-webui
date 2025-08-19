@@ -1,4 +1,4 @@
-import { VM } from "@/types/vm";
+import { VM } from "shared";
 
 export interface VMTableProps {
   data: VM[];

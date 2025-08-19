@@ -1,4 +1,4 @@
-import { VM } from "@/types/vm";
+import { VM } from "shared";
 
 export function getAllTagsFromVMs(vms: VM[]): string[] {
   const allTags = vms.flatMap(vm =>
