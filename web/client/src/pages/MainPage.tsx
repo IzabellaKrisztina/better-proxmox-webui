@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Container, Typography, Button } from "@mui/material";
 import { loadMockVMs } from "@/utils/loadVMs";
 import { getAllTagsFromVMs } from "@/utils/getAllTags";
-import type { VM } from "@shared/types/vm";
+import type { VM } from "shared";
 import VMTable from "@/components/VMTable";
 import VMTableFilters from "@/components/VMTableFilters";
 
